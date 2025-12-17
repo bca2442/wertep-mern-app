@@ -1,74 +1,58 @@
 import express from 'express';
+import path from 'path'; // 1. Added path module
+import { fileURLToPath } from 'url'; // 2. Needed for __dirname in .mjs
 import cookieParser from 'cookie-parser';
-import authRoutes from './routes/auth.route.mjs'; // For /api/auth routes (Sign-In/Sign-Out)
-import userRoutes from './routes/user.route.mjs'; // For /api/user routes (Profile/Update/Delete)
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-// Assuming you have a database connection string in a .env file
+import authRoutes from './routes/auth.route.mjs';
+import userRoutes from './routes/user.route.mjs';
+
 dotenv.config();
 
-// The environment variable for the database connection string
-const DB_CONNECTION_STRING = process.env.MONGO_URI || 'mongodb://localhost:27017/mern_app'; 
-const PORT = process.env.PORT || 3000;
+// --- 2. Fix for __dirname in ES Modules (.mjs) ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Use MONGO (matching your Render environment variable)
+const DB_CONNECTION_STRING = process.env.MONGO; 
+const PORT = process.env.PORT || 10000;
 
 // --- Database Connection ---
 mongoose.connect(DB_CONNECTION_STRING)
-    .then(() => {
-        console.log('Connected to MongoDB!');
-    })
-    .catch((err) => {
-        console.error('MongoDB Connection Error:', err);
-    });
-// ----------------------------
-
+    .then(() => console.log('Connected to MongoDB!'))
+    .catch((err) => console.error('MongoDB Connection Error:', err));
 
 const app = express();
 
 // --- Middleware Setup ---
-// 1. Allows Express to parse JSON body from incoming requests (for POST/PUT requests)
 app.use(express.json()); 
-// 2. Middleware to parse cookies (necessary for reading/clearing the 'jwt' token)
 app.use(cookieParser()); 
-// -------------------------
 
-// --- Route Connection ---
-// The application uses these files to determine which controller function to call
-app.use('/api/auth', authRoutes); // Base path: /api/auth
-app.use('/api/user', userRoutes); // Base path: /api/user
-// ------------------------
+// --- API Routes ---
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 
-// --- Static Content (Optional - for serving the frontend build) ---
-// If you are serving a frontend build (e.g., React/Vue), you would add this:
-/*
-app.use(express.static(path.join(__dirname, '/client/dist')));
+// --- 3. Serving the Frontend (CRITICAL FOR DEPLOY) ---
+// This serves the static files from your React "dist" folder
+app.use(express.static(path.join(__dirname, '../wertep-front end/dist')));
+
+// This ensures that any request not matching an API route 
+// sends the user to your index.html (important for React Router)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../wertep-front end/dist/index.html'));
 });
-*/
-// ------------------------------------------------------------------
 
-// --- Final Error Handling Middleware ---
-/**
- * This is the final middleware layer that catches all errors (next(error)) 
- * thrown by controllers or other middleware (like verifyUser). 
- * It ensures a standardized, clean JSON response for errors.
- */
+// --- Final Error Handling ---
 app.use((err, req, res, next) => {
-    // Determine the status code (default to 500 Internal Server Error)
     const statusCode = err.statusCode || 500;
-    // Determine the error message (default to 'Internal Server Error')
     const message = err.message || 'Internal Server Error';
-    
-    // Send a structured JSON response
     return res.status(statusCode).json({
         success: false,
         statusCode,
         message,
     });
 });
-// ----------------------------------------
 
-// --- Server Listener ---
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
