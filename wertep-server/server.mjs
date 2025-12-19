@@ -10,7 +10,7 @@ import authRouter from './routes/auth.route.mjs';
 dotenv.config();
 
 // 1. DATABASE CONNECTION
-// We use MONGO_URI here. Ensure your Render Environment Key is also MONGO_URI
+// This uses MONGO_URI. You MUST rename the key in Render from MONGO_URL to MONGO_URI
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
@@ -29,15 +29,15 @@ app.use(cookieParser());
 // 3. API ROUTES
 app.use('/api/auth', authRouter);
 
-// 4. SERVE FRONTEND (MERN Deployment Logic)
+// 4. SERVE FRONTEND (Updated folder name to 'wertep-frontend')
 const __dirname = path.resolve();
 
-// This path joins the current directory with your frontend folder and dist
-// It handles the space in 'wertep-front end' safely for Linux/Render
-app.use(express.static(path.join(__dirname, 'wertep-front end', 'dist')));
+// This tells the server where the 'dist' folder is
+app.use(express.static(path.join(__dirname, 'wertep-frontend', 'dist')));
 
+// This handles the "Blank Page" issue by directing all traffic to index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'wertep-front end', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'wertep-frontend', 'dist', 'index.html'));
 });
 
 // 5. ERROR HANDLING MIDDLEWARE
@@ -52,7 +52,6 @@ app.use((err, req, res, next) => {
 });
 
 // 6. PORT CONFIGURATION
-// Render provides the PORT dynamically. Defaulting to 10000 for local testing.
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, '0.0.0.0', () => {
