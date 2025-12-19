@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
-// Imports for Redux hooks and actions
 import { useDispatch, useSelector } from 'react-redux';
 import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
-// Imports for routing (assuming you use React Router)
 import { Link, useNavigate } from 'react-router-dom'; 
 
 export default function SignIn() {
-    // Local state for form input data
     const [formData, setFormData] = useState({});
     
-    // Global state selectors: Pull loading and error from the Redux store
     const { loading, error } = useSelector((state) => state.user); 
     
     const dispatch = useDispatch();
-    const navigate = useNavigate(); // Hook for programmatic navigation
 
-    // Handles changes in form inputs (email and password)
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -23,12 +17,12 @@ export default function SignIn() {
         });
     };
 
-    // Handles the form submission
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            // 1. Dispatch Start: Set global loading state to true
+            
             dispatch(signInStart()); 
 
             // 2. API Call: Send credentials to the backend
