@@ -1,31 +1,16 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import Profile from './pages/Profile';
-import Header from './components/Header'; 
-import PrivateRoute from './components/PrivateRoute'; 
+import React from 'react';
 
-export default function App() {
-    return (
-        <BrowserRouter>
-            {/* Header is outside of Routes so it appears on all pages */}
-            <Header /> 
-            
-            <Routes>
-                {/* Public Routes: Accessible to everyone */}
-                <Route path='/' element={<Home />} />
-                <Route path='/about' element={<About />} />
-                <Route path='/sign-in' element={<SignIn />} />
-                <Route path='/sign-up' element={<SignUp />} />
-                
-                {/* Protected Routes: Only accessible to logged-in users */}
-                <Route element={<PrivateRoute />}>
-                    {/* All child routes inside this <Route> element are protected */}
-                    <Route path='/profile' element={<Profile />} /> 
-                </Route>
-            </Routes>
-        </BrowserRouter>
-    );
+function App() {
+  return (
+    <div style={{ textAlign: 'center', marginTop: '100px', fontFamily: 'Arial' }}>
+      <h1 style={{ color: '#007bff' }}>Wertep MERN App</h1>
+      <div style={{ border: '1px solid #ccc', padding: '20px', display: 'inline-block', borderRadius: '10px' }}>
+        <h3>Success!</h3>
+        <p>The Frontend is building correctly.</p>
+        <p>The Backend is connected to MongoDB.</p>
+      </div>
+    </div>
+  );
 }
+
+export default App;
