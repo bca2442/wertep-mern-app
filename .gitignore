@@ -1,16 +1,16 @@
 # Dependency folders
 node_modules/
-/wertep-server/node_modules/
-/wertep-front end/node_modules/
+wertep-server/node_modules/
+wertep-frontend/node_modules/
 
-# Environment variables (CRITICAL SECURITY)
+# Environment variables
 .env
 .env.local
 
-# Frontend Build Output (The files you just created with npm run build)
-/wertep-front end/dist
+# Frontend Build Output
+wertep-frontend/dist
 
-# IDE/System specific files
+# System files
 .DS_Store
 Thumbs.db
 .vscode/
